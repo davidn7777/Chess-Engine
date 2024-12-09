@@ -6,15 +6,17 @@ def load_svg(svg_path):
     with open(svg_path, "r") as file:
         return file.read()
 
+def update_svg():
+    svg_file = 'board.svg'
+    st.session_state.svg_data = load_svg(svg_file)
+
 def app():
     col1,col2 = st.columns(2)
-
     if 'fen' not in st.session_state:
         st.session_state.fen = ChessGame.gen_board()  
 
     if 'svg_data' not in st.session_state:
-        svg_file = 'board.svg'
-        st.session_state.svg_data = load_svg(svg_file)
+        update_svg()
 
     with col1:
         with st.container():  
@@ -33,8 +35,7 @@ def app():
                 st.write(f'You entered the move: {uci_move}')
                 if uci_move in ChessGame.get_legal(st.session_state.fen):
                     st.session_state.fen = ChessGame.move(st.session_state.fen,uci_move)
-                    svg_file = 'board.svg'
-                    st.session_state.svg_data = load_svg(svg_file)
+                    update_svg()
                 else:
                     st.error("Please input a legal move in the form: e2e4")
 
